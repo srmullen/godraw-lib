@@ -2,11 +2,12 @@ package path
 
 import (
 	"fmt"
-	"godraw/lib/geometry/d2/bounds"
-	"godraw/lib/geometry/d2/line"
-	"godraw/lib/geometry/d2/point"
 	"log"
 	"math"
+
+	"github.com/srmullen/godraw-lib/geometry/d2/bounds"
+	"github.com/srmullen/godraw-lib/geometry/d2/line"
+	"github.com/srmullen/godraw-lib/geometry/d2/point"
 )
 
 // https://www.w3.org/TR/SVG11/paths.html

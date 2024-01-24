@@ -1,8 +1,9 @@
 package line
 
 import (
-	"godraw/lib/geometry/d2"
 	"math"
+
+	"github.com/srmullen/godraw-lib/geometry/d2"
 )
 
 const precision = 4

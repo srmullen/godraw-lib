@@ -1,10 +1,11 @@
 package polygon
 
 import (
-	"godraw/lib/geometry/d2/line"
-	"godraw/lib/geometry/d2/path"
-	"godraw/lib/geometry/d2/point"
 	"math"
+
+	"github.com/srmullen/godraw-lib/geometry/d2/line"
+	"github.com/srmullen/godraw-lib/geometry/d2/path"
+	"github.com/srmullen/godraw-lib/geometry/d2/point"
 
 	"github.com/engelsjk/polygol"
 )

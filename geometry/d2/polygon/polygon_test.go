@@ -1,8 +1,9 @@
 package polygon
 
 import (
-	"godraw/lib/geometry/d2/point"
 	"testing"
+
+	"github.com/srmullen/godraw-lib/geometry/d2/point"
 
 	"github.com/stretchr/testify/assert"
 )

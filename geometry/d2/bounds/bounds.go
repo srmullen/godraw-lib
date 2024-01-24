@@ -1,6 +1,7 @@
 package bounds
 
-import "godraw/lib/geometry/d2/point"
+// import "godraw/lib/geometry/d2/point"
+import "github.com/srmullen/godraw-lib/geometry/d2/point"
 
 type Bounds struct {
 	Top    float64

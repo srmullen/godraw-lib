@@ -1,8 +1,9 @@
 package point
 
 import (
-	"godraw/lib/geometry/d2"
 	"math"
+
+	"github.com/srmullen/godraw-lib/geometry/d2"
 )
 
 type Point struct {

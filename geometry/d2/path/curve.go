@@ -2,8 +2,9 @@ package path
 
 import (
 	"fmt"
-	"godraw/lib/geometry/d2/point"
 	"math"
+
+	"github.com/srmullen/godraw-lib/geometry/d2/point"
 )
 
 type Curve struct {

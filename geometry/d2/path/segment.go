@@ -1,6 +1,6 @@
 package path
 
-import "godraw/lib/geometry/d2/point"
+import "github.com/srmullen/godraw-lib/geometry/d2/point"
 
 type Segment struct {
 	point.Point
