@@ -21,17 +21,6 @@ func NewPolygon(coords []*point.Point) *Polygon {
 	}
 }
 
-func NewRectangle(x, y, width, height float64) *Polygon {
-	return &Polygon{
-		Path: path.NewPath([]*point.Point{
-			{X: x, Y: y},
-			{X: x + width, Y: y},
-			{X: x + width, Y: y + height},
-			{X: x, Y: y + height},
-		}, true),
-	}
-}
-
 func NewStar(x, y, radius, innerRadius float64, points int) *Polygon {
 	if points < 3 {
 		panic("Cannot create polygon with less than 3 sides")
@@ -242,12 +231,10 @@ func (poly *Polygon) ContainsPoint(x, y float64) bool {
 	}
 	// create a horizontal line that extends from the point
 	lne := path.NewLine(x, y, bound.Right+21, y)
-	// lne := path.NewLine(x, y, bound.Right+21, bound.Bottom+21)
 
-	// log.Println("line", line.Length())
 	// count the number of intersections with the polygon
-	intersections := poly.LineIntersections(lne)
-	// log.Println("intersections", len(intersections), x, y)
+	intersections := poly.LineIntersections(&lne.Path)
+
 	// if the point is on the border, then the polygon contains the point
 	for _, intersection := range intersections {
 		// log.Println(intersection.X, intersection.Y, x, y)

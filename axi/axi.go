@@ -21,6 +21,10 @@ type Axi struct {
 	}
 }
 
+type PathData interface {
+	PathData() string
+}
+
 func NewAxi(width, height float64) *Axi {
 	s := svg.New(os.Stdout)
 	s.Start(int(width), int(height), "xmlns:inkscape=\"http://www.inkscape.org/namespaces/inkscape\"")
@@ -86,8 +90,18 @@ func (axi *Axi) Circle(x, y, r float64) {
 	axi.ctx.Circle(int(x), int(y), int(r), fmt.Sprintf("fill:none;stroke:%s;stroke-width:%f", axi.pen.Color, axi.pen.Width))
 }
 
-func (axi *Axi) Path(path string) {
+func (axi *Axi) SVGPath(path string) {
 	axi.ctx.Path(path, fmt.Sprintf("fill:none;stroke:%s;stroke-width:%f", axi.pen.Color, axi.pen.Width))
+}
+
+func (axi *Axi) Path(p PathData) {
+	axi.SVGPath(p.PathData())
+}
+
+func (axi *Axi) Paths(p []PathData) {
+	for _, path := range p {
+		axi.Path(path)
+	}
 }
 
 func (axi *Axi) MoveTo(x, y float64) {

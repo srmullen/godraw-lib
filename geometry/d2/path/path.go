@@ -47,28 +47,6 @@ func NewClosedPath(coords []*point.Point) *Path {
 	return NewPath(coords, true)
 }
 
-func NewLine(x1, y1, x2, y2 float64) *Path {
-	return &Path{
-		Segments: []*Segment{
-			{
-				point.Point{
-					X: x1,
-					Y: y1,
-				},
-				nil,
-			},
-			{
-				point.Point{
-					X: x2,
-					Y: y2,
-				},
-				nil,
-			},
-		},
-		Closed: false,
-	}
-}
-
 func (p *Path) Segment(i int) *Segment {
 	return p.Segments[i]
 }

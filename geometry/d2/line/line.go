@@ -124,33 +124,3 @@ func (line *Line) X(y float64) float64 {
 func (line *Line) XY(x, y float64) (float64, float64) {
 	return line.X(y), line.Y(x)
 }
-
-// func FromPoints(start, end *point.Point) *Line {
-// 	return &Line{
-// 		Start: start,
-// 		End:   end,
-// 	}
-// }
-
-// func (line *Line) Intersection(other *Line) *point.Point {
-// 	x, y, ok := GetIntersection(line.Start.X, line.Start.Y, line.End.X, line.End.Y, other.Start.X, other.Start.Y, other.End.X, other.End.Y)
-// 	if !ok {
-// 		return nil
-// 	}
-// 	return &point.Point{X: x, Y: y}
-// }
-
-// func (line *Line) Length() float64 {
-// 	return line.Start.Distance(line.End)
-// }
-
-// func (line *Line) ToVector() *point.Point {
-// 	return line.End.Subtract(line.Start)
-// }
-
-// func (line *Line) Translate(x, y float64) *Line {
-// 	return &Line{
-// 		Start: line.Start.Add(&point.Point{X: x, Y: y}),
-// 		End:   line.End.Add(&point.Point{X: x, Y: y}),
-// 	}
-// }
