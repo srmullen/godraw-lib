@@ -29,9 +29,9 @@ func NewStar(x, y, radius, innerRadius float64, points int) *Polygon {
 	coords := []*point.Point{}
 	for i := 0; i < points; i++ {
 		if i%2 == 0 {
-			coords = append(coords, point.NewPointFromAngle(float64(i)*2*math.Pi/float64(points), radius).Add(point.NewPoint(x, y)))
+			coords = append(coords, point.NewPointFromAngle(float64(i)*2*math.Pi/float64(points), radius).Add(x, y))
 		} else {
-			coords = append(coords, point.NewPointFromAngle(float64(i)*2*math.Pi/float64(points), innerRadius).Add(point.NewPoint(x, y)))
+			coords = append(coords, point.NewPointFromAngle(float64(i)*2*math.Pi/float64(points), innerRadius).Add(x, y))
 		}
 	}
 	return &Polygon{
@@ -101,7 +101,7 @@ func NewNgon(sides int, x, y, radius float64) *Polygon {
 	}
 	points := []*point.Point{}
 	for i := 0; i < sides; i++ {
-		points = append(points, point.NewPointFromAngle(float64(i)*2*math.Pi/float64(sides), radius).Add(point.NewPoint(x, y)))
+		points = append(points, point.NewPointFromAngle(float64(i)*2*math.Pi/float64(sides), radius).Add(x, y))
 	}
 	return &Polygon{
 		Path: path.NewPath(points, true),

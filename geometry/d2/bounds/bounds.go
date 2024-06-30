@@ -34,6 +34,13 @@ func (b *Bounds) BottomRight() *point.Point {
 	return &point.Point{X: b.Right, Y: b.Bottom}
 }
 
+func (b *Bounds) Translate(x, y float64) {
+	b.Left += x
+	b.Right += x
+	b.Top += y
+	b.Bottom += y
+}
+
 // Center returns the center point of the bounds
 func (b *Bounds) Center() *point.Point {
 	return &point.Point{

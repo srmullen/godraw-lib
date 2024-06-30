@@ -50,24 +50,24 @@ func (p *Point) EqualsWithTolerance(other *Point, tolerance float64) bool {
 	return d2.WithinTolerance(p.X, other.X, tolerance) && d2.WithinTolerance(p.Y, other.Y, tolerance)
 }
 
-func (p1 *Point) Add(p2 *Point) *Point {
+func (p1 *Point) Add(x, y float64) *Point {
 	return &Point{
-		p1.X + p2.X,
-		p1.Y + p2.Y,
+		p1.X + x,
+		p1.Y + y,
 	}
 }
 
-func (p1 *Point) Subtract(p2 *Point) *Point {
+func (p1 *Point) Subtract(x, y float64) *Point {
 	return &Point{
-		p1.X - p2.X,
-		p1.Y - p2.Y,
+		p1.X - x,
+		p1.Y - y,
 	}
 }
 
-func (p1 *Point) Divide(p2 *Point) *Point {
+func (p1 *Point) Divide(x, y float64) *Point {
 	return &Point{
-		p1.X / p2.X,
-		p1.Y / p2.Y,
+		p1.X / x,
+		p1.Y / y,
 	}
 }
 
@@ -78,12 +78,33 @@ func (p1 *Point) ScalarMult(s float64) *Point {
 	}
 }
 
+func (p1 *Point) AddPoint(p2 *Point) *Point {
+	return &Point{
+		p1.X + p2.X,
+		p1.Y + p2.Y,
+	}
+}
+
+func (p1 *Point) SubtractPoint(p2 *Point) *Point {
+	return &Point{
+		p1.X - p2.X,
+		p1.Y - p2.Y,
+	}
+}
+
+func (p1 *Point) DividePoint(p2 *Point) *Point {
+	return &Point{
+		p1.X / p2.X,
+		p1.Y / p2.Y,
+	}
+}
+
 func (p1 *Point) Magnitude() float64 {
 	return math.Sqrt(p1.X*p1.X + p1.Y*p1.Y)
 }
 
 func (p1 *Point) Distance(p2 *Point) float64 {
-	return p1.Subtract(p2).Magnitude()
+	return p1.SubtractPoint(p2).Magnitude()
 }
 
 func (p1 *Point) Normalize() *Point {

@@ -7,3 +7,4 @@ TODO
 ----
 
 - Implement Layers
+- Methods mutate structs. Package functions return new structs.
