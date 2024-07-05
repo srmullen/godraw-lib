@@ -1,7 +1,10 @@
 package bounds
 
 // import "godraw/lib/geometry/d2/point"
-import "github.com/srmullen/godraw-lib/geometry/d2/point"
+import (
+	"github.com/srmullen/godraw-lib/geometry/d2"
+	"github.com/srmullen/godraw-lib/geometry/d2/point"
+)
 
 type Bounds struct {
 	Top    float64
@@ -55,6 +58,11 @@ func (b *Bounds) ContainsPoint(point *point.Point) bool {
 }
 
 func (b *Bounds) Contains(x, y float64) bool {
+	return b.ContainsX(x) && b.ContainsY(y)
+}
+
+func (b *Bounds) ContainsCoords(coords d2.Coords) bool {
+	x, y := coords.Coords()
 	return b.ContainsX(x) && b.ContainsY(y)
 }
 

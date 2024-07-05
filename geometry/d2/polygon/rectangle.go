@@ -1,6 +1,8 @@
 package polygon
 
 import (
+	"log"
+
 	"github.com/srmullen/godraw-lib/geometry/d2/path"
 	"github.com/srmullen/godraw-lib/geometry/d2/point"
 )
@@ -14,13 +16,15 @@ type Rectangle struct {
 }
 
 func NewRectangle(x, y, width, height float64) *Rectangle {
+	pd := []float64{
+		x, y,
+		x + width, y,
+		x + width, y + height,
+		x, y + height,
+	}
+	log.Println("pd", pd)
 	poly := &Polygon{
-		Path: path.NewPath([]*point.Point{
-			{X: x, Y: y},
-			{X: x + width, Y: y},
-			{X: x + width, Y: y + height},
-			{X: x, Y: y + height},
-		}, true),
+		Path: path.NewPath(pd, true),
 	}
 	return &Rectangle{
 		poly,
@@ -54,7 +58,7 @@ func (r *Rectangle) Height() float64 {
 	return r.height
 }
 
-func (r *Rectangle) Center() *point.Point {
+func (r *Rectangle) Center() point.Point {
 	return point.NewPoint(r.x+r.width/2, r.y+r.height/2)
 }
 

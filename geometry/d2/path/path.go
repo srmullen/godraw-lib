@@ -21,17 +21,15 @@ type Path struct {
 	Closed   bool
 }
 
-func NewPath(coords []*point.Point, closed bool) *Path {
-	segments := make([]*Segment, len(coords))
-	for i, coord := range coords {
-		x, y := coord.Coords()
-		segments[i] = &Segment{
-			Point: point.Point{
-				X: x,
-				Y: y,
-			},
+func NewPath(coords []float64, closed bool) *Path {
+	segments := make([]*Segment, 0)
+	for i := 0; i < len(coords); i += 2 {
+		x := coords[i]
+		y := coords[i+1]
+		segments = append(segments, &Segment{
+			Point: point.NewPoint(x, y),
 			Curve: nil,
-		}
+		})
 	}
 	return &Path{
 		Segments: segments,
@@ -39,11 +37,11 @@ func NewPath(coords []*point.Point, closed bool) *Path {
 	}
 }
 
-func NewOpenPath(coords []*point.Point) *Path {
+func NewOpenPath(coords []float64) *Path {
 	return NewPath(coords, false)
 }
 
-func NewClosedPath(coords []*point.Point) *Path {
+func NewClosedPath(coords []float64) *Path {
 	return NewPath(coords, true)
 }
 
@@ -191,8 +189,8 @@ func (p *Path) Length() float64 {
 }
 
 // FIXME: This is a naive implementation that only works for straight lines
-func (p *Path) GetIntersections(other *Path) []*point.Point {
-	var intersections []*point.Point
+func (p *Path) GetIntersections(other *Path) []point.Point {
+	var intersections []point.Point
 	// If bounds don't intersect, then there are no intersections
 	if !p.GetBounds().Overlaps(other.GetBounds()) {
 		return intersections

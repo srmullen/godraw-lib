@@ -3,6 +3,7 @@ package polygon
 import (
 	"math"
 
+	"github.com/srmullen/godraw-lib/geometry/d2"
 	"github.com/srmullen/godraw-lib/geometry/d2/line"
 	"github.com/srmullen/godraw-lib/geometry/d2/path"
 	"github.com/srmullen/godraw-lib/geometry/d2/point"
@@ -10,14 +11,24 @@ import (
 	"github.com/engelsjk/polygol"
 )
 
+type Points []point.Point
+
+func (p Points) Data() []float64 {
+	var data []float64
+	for _, point := range p {
+		data = append(data, point.X, point.Y)
+	}
+	return data
+}
+
 // Polygon is a closed path that does not have any curves
 type Polygon struct {
 	*path.Path
 }
 
-func NewPolygon(coords []*point.Point) *Polygon {
+func NewPolygon(coords d2.CoordData) *Polygon {
 	return &Polygon{
-		Path: path.NewPath(coords, true),
+		Path: path.NewPath(coords.Data(), true),
 	}
 }
 
@@ -26,7 +37,7 @@ func NewStar(x, y, radius, innerRadius float64, points int) *Polygon {
 		panic("Cannot create polygon with less than 3 sides")
 	}
 	points *= 2
-	coords := []*point.Point{}
+	coords := Points{}
 	for i := 0; i < points; i++ {
 		if i%2 == 0 {
 			coords = append(coords, point.NewPointFromAngle(float64(i)*2*math.Pi/float64(points), radius).Add(x, y))
@@ -35,7 +46,7 @@ func NewStar(x, y, radius, innerRadius float64, points int) *Polygon {
 		}
 	}
 	return &Polygon{
-		Path: path.NewPath(coords, true),
+		Path: path.NewPath(coords.Data(), true),
 	}
 }
 
@@ -99,17 +110,17 @@ func NewNgon(sides int, x, y, radius float64) *Polygon {
 	if sides < 3 {
 		panic("Cannot create polygon with less than 3 sides")
 	}
-	points := []*point.Point{}
+	points := Points{}
 	for i := 0; i < sides; i++ {
 		points = append(points, point.NewPointFromAngle(float64(i)*2*math.Pi/float64(sides), radius).Add(x, y))
 	}
 	return &Polygon{
-		Path: path.NewPath(points, true),
+		Path: path.NewPath(points.Data(), true),
 	}
 }
 
-func (p *Polygon) GetIntersections(other *Polygon) []*point.Point {
-	var intersections []*point.Point
+func (p *Polygon) GetIntersections(other *Polygon) Points {
+	intersections := Points{}
 	// If bounds don't intersect, then there are no intersections
 	if !p.GetBounds().Overlaps(other.GetBounds()) {
 		return intersections
@@ -130,8 +141,9 @@ func (p *Polygon) GetIntersections(other *Polygon) []*point.Point {
 	return intersections
 }
 
-func (p *Polygon) LineIntersections(lne *path.Path) []*point.Point {
-	var intersections []*point.Point
+func (p *Polygon) LineIntersections(lne *path.Path) Points {
+	// var intersections []*point.Point
+	intersections := Points{}
 	for i := 0; i < len(p.Segments); i++ {
 		from := p.Segments[i].Point
 		to := p.Segments[(i+1)%len(p.Segments)].Point
@@ -144,7 +156,8 @@ func (p *Polygon) LineIntersections(lne *path.Path) []*point.Point {
 		// }
 	}
 	// Remove duplicates (intersection through the corner of a polygon)
-	ret := []*point.Point{}
+	// ret := []*point.Point{}
+	ret := Points{}
 	for _, intersection := range intersections {
 		found := false
 		for _, point := range ret {
@@ -191,9 +204,9 @@ func ToGeoms(polygons ...*Polygon) []polygol.Geom {
 func FromGeom(multipolygon polygol.Geom) []*Polygon {
 	polygons := make([]*Polygon, len(multipolygon))
 	for i, polygon := range multipolygon {
-		var points []*point.Point
+		var points Points
 		for _, vertex := range polygon[0] {
-			points = append(points, &point.Point{X: vertex[0], Y: vertex[1]})
+			points = append(points, point.Point{X: vertex[0], Y: vertex[1]})
 		}
 		polygons[i] = NewPolygon(points)
 	}
@@ -247,6 +260,6 @@ func (poly *Polygon) ContainsPoint(x, y float64) bool {
 	return len(intersections)%2 == 1
 }
 
-func GetTriangleCenter(p1, p2, p3 *point.Point) *point.Point {
+func GetTriangleCenter(p1, p2, p3 *point.Point) point.Point {
 	return point.NewPoint((p1.X+p2.X+p3.X)/3, (p1.Y+p2.Y+p3.Y)/3)
 }

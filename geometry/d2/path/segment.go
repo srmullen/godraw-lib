@@ -19,7 +19,7 @@ func NewSegment(x, y float64) *Segment {
 
 func (s *Segment) Scale(m float64) *Segment {
 	return &Segment{
-		Point: *s.Point.ScalarMult(m),
+		Point: s.Point.ScalarMult(m),
 		// Curve: s.Curve.Scale(m),
 		Curve: s.Curve,
 	}

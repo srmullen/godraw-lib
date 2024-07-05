@@ -11,16 +11,16 @@ type Point struct {
 	Y float64
 }
 
-func NewPoint(x, y float64) *Point {
-	return &Point{
+func NewPoint(x, y float64) Point {
+	return Point{
 		X: x,
 		Y: y,
 	}
 }
 
 // NewPointFromAngle creates a new point from an angle (radians) and magnitude
-func NewPointFromAngle(radians, magnitude float64) *Point {
-	return &Point{
+func NewPointFromAngle(radians, magnitude float64) Point {
+	return Point{
 		magnitude * math.Cos(radians),
 		magnitude * math.Sin(radians),
 	}
@@ -34,48 +34,66 @@ func (p *Point) Rotate(radians float64) *Point {
 }
 
 // Returns the angle of the vector in radians
-func (p *Point) Angle() float64 {
+func (p Point) Angle() float64 {
 	return math.Atan2(p.Y, p.X)
 }
 
-func (p *Point) Coords() (float64, float64) {
+func (p Point) Coords() (float64, float64) {
 	return p.X, p.Y
 }
 
-func (p *Point) Equals(other *Point) bool {
+func (p Point) Equals(other *Point) bool {
 	return p.X == other.X && p.Y == other.Y
 }
 
-func (p *Point) EqualsWithTolerance(other *Point, tolerance float64) bool {
+func (p Point) EqualsWithTolerance(other Point, tolerance float64) bool {
 	return d2.WithinTolerance(p.X, other.X, tolerance) && d2.WithinTolerance(p.Y, other.Y, tolerance)
 }
 
-func (p1 *Point) Add(x, y float64) *Point {
-	return &Point{
-		p1.X + x,
-		p1.Y + y,
-	}
+func (p Point) Add(x, y float64) Point {
+	p.X += x
+	p.Y += y
+	return p
 }
 
-func (p1 *Point) Subtract(x, y float64) *Point {
-	return &Point{
-		p1.X - x,
-		p1.Y - y,
-	}
+func (p Point) Subtract(x, y float64) Point {
+	p.X -= x
+	p.Y -= y
+	return p
 }
 
-func (p1 *Point) Divide(x, y float64) *Point {
-	return &Point{
-		p1.X / x,
-		p1.Y / y,
-	}
+func (p Point) Divide(x, y float64) Point {
+	p.X /= x
+	p.Y /= y
+	return p
 }
 
-func (p1 *Point) ScalarMult(s float64) *Point {
-	return &Point{
-		p1.X * s,
-		p1.Y * s,
-	}
+func (p Point) Multiply(x, y float64) Point {
+	p.X *= x
+	p.Y *= y
+	return p
+}
+
+func (p Point) ScalarMult(s float64) Point {
+	p.X *= s
+	p.Y *= s
+	return p
+}
+
+func (p Point) AddCoords(coords d2.Coords) Point {
+	return p.Add(coords.Coords())
+}
+
+func (p Point) SubtractCoords(coords d2.Coords) Point {
+	return p.Subtract(coords.Coords())
+}
+
+func (p Point) DivideCoords(coords d2.Coords) Point {
+	return p.Divide(coords.Coords())
+}
+
+func (p Point) MultiplyCoords(coords d2.Coords) Point {
+	return p.Multiply(coords.Coords())
 }
 
 func (p1 *Point) AddPoint(p2 *Point) *Point {
@@ -107,8 +125,8 @@ func (p1 *Point) Distance(p2 *Point) float64 {
 	return p1.SubtractPoint(p2).Magnitude()
 }
 
-func (p1 *Point) Normalize() *Point {
-	return p1.ScalarMult(1 / p1.Magnitude())
+func (p Point) Normalize() Point {
+	return p.ScalarMult(1 / p.Magnitude())
 }
 
 func (p1 *Point) Dot(p2 *Point) float64 {
