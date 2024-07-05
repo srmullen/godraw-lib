@@ -1,8 +1,6 @@
 package polygon
 
 import (
-	"log"
-
 	"github.com/srmullen/godraw-lib/geometry/d2/path"
 	"github.com/srmullen/godraw-lib/geometry/d2/point"
 )
@@ -22,7 +20,6 @@ func NewRectangle(x, y, width, height float64) *Rectangle {
 		x + width, y + height,
 		x, y + height,
 	}
-	log.Println("pd", pd)
 	poly := &Polygon{
 		Path: path.NewPath(pd, true),
 	}
