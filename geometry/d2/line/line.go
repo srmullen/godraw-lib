@@ -67,11 +67,28 @@ func GetIntersection(x1, y1, x2, y2, x3, y3, x4, y4 float64) (x, y float64, ok b
 // Standard form
 // Ax + By = C
 type Line struct {
-	// Start *point.Point
-	// End   *point.Point
-	A float64
-	B float64
-	C float64
+	x1, y1, x2, y2 float64
+}
+
+func NewLine(x1, y1, x2, y2 float64) Line {
+	return Line{
+		x1: x1,
+		y1: y1,
+		x2: x2,
+		y2: y2,
+	}
+}
+
+// Implement the Vector interface
+
+// Magnitude return the length of the line
+func (l Line) Magnitude() float64 {
+	return math.Sqrt(math.Pow(l.x2-l.x1, 2) + math.Pow(l.y2-l.y1, 2))
+}
+
+// return -pi to pi
+func (l Line) Direction() float64 {
+	return math.Atan2(l.y2-l.y1, l.x2-l.x1)
 }
 
 // Slope-intercept form
@@ -80,47 +97,47 @@ type Line struct {
 // Point-slope form
 // y - b = m(x - a)
 
-func NewLine(a, b, c float64) *Line {
-	return &Line{
-		A: a,
-		B: b,
-		C: c,
-	}
-}
+// func NewLine(a, b, c float64) *Line {
+// 	return &Line{
+// 		A: a,
+// 		B: b,
+// 		C: c,
+// 	}
+// }
 
-func FromPointSlope(x, y, m float64) *Line {
-	return &Line{
-		A: m,
-		B: -1,
-		C: y - m*x,
-	}
-}
+// func FromPointSlope(x, y, m float64) *Line {
+// 	return &Line{
+// 		A: m,
+// 		B: -1,
+// 		C: y - m*x,
+// 	}
+// }
 
-func FromTwoPoints(x1, y1, x2, y2 float64) *Line {
-	return &Line{
-		A: y1 - y2,
-		B: x2 - x1,
-		C: x1*y2 - x2*y1,
-	}
-}
+// func FromTwoPoints(x1, y1, x2, y2 float64) *Line {
+// 	return &Line{
+// 		A: y1 - y2,
+// 		B: x2 - x1,
+// 		C: x1*y2 - x2*y1,
+// 	}
+// }
 
 // FromRadians returns a line that passes through the point (x, y) and has the given angle in radians
-func FromRadians(x, y, radians float64) *Line {
-	return &Line{
-		A: -math.Sin(radians),
-		B: math.Cos(radians),
-		C: x*math.Sin(radians) - y*math.Cos(radians),
-	}
-}
+// func FromRadians(x, y, radians float64) *Line {
+// 	return &Line{
+// 		A: -math.Sin(radians),
+// 		B: math.Cos(radians),
+// 		C: x*math.Sin(radians) - y*math.Cos(radians),
+// 	}
+// // }
 
-func (line *Line) Y(x float64) float64 {
-	return (line.C - line.A*x) / line.B
-}
+// func (line *Line) Y(x float64) float64 {
+// 	return (line.C - line.A*x) / line.B
+// }
 
-func (line *Line) X(y float64) float64 {
-	return (line.C - line.B*y) / line.A
-}
+// func (line *Line) X(y float64) float64 {
+// 	return (line.C - line.B*y) / line.A
+// }
 
-func (line *Line) XY(x, y float64) (float64, float64) {
-	return line.X(y), line.Y(x)
-}
+// func (line *Line) XY(x, y float64) (float64, float64) {
+// 	return line.X(y), line.Y(x)
+// }

@@ -1,10 +1,31 @@
 package line
 
 import (
+	"math"
 	"testing"
 
+	"github.com/srmullen/godraw-lib/geometry"
+	"github.com/srmullen/godraw-lib/geometry/d2"
 	"github.com/stretchr/testify/assert"
 )
+
+func TestMagnitude(t *testing.T) {
+	assert.Equal(t, 1., NewLine(0, 0, 0, 1).Magnitude())
+	assert.True(t, d2.WithinTolerance(1.41421, NewLine(0, 0, 1, 1).Magnitude(), 0.00001))
+	assert.True(t, d2.WithinTolerance(1.41421, NewLine(30, 30, 31, 31).Magnitude(), 0.00001))
+	assert.True(t, d2.WithinTolerance(1.41421, NewLine(0, 0, -1, -1).Magnitude(), 0.00001))
+}
+
+func TestDirection(t *testing.T) {
+	assert.Equal(t, 0., NewLine(0, 0, 1, 0).Direction())
+	assert.Equal(t, 0., NewLine(10, 10, 11, 10).Direction())
+
+	assert.Equal(t, math.Pi/2, NewLine(0, 0, 0, 1).Direction())
+	assert.Equal(t, math.Pi/4, NewLine(0, 0, 1, 1).Direction())
+	assert.Equal(t, math.Pi*3/4, NewLine(0, 0, -1, 1).Direction())
+	assert.Equal(t, math.Pi, NewLine(0, 0, -1, 0).Direction())
+	assert.Equal(t, geometry.NormalizeRadians(math.Pi+math.Pi/4), NewLine(0, 0, -1, -1).Direction())
+}
 
 func TestLineIntersection(t *testing.T) {
 
