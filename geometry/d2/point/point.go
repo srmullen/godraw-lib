@@ -33,11 +33,6 @@ func (p *Point) Rotate(radians float64) *Point {
 	}
 }
 
-// Returns the angle of the vector in radians
-func (p Point) Angle() float64 {
-	return math.Atan2(p.Y, p.X)
-}
-
 func (p Point) Coords() (float64, float64) {
 	return p.X, p.Y
 }
@@ -119,6 +114,11 @@ func (p1 *Point) DividePoint(p2 *Point) *Point {
 
 func (p1 *Point) Magnitude() float64 {
 	return math.Sqrt(p1.X*p1.X + p1.Y*p1.Y)
+}
+
+// Returns the angle of the vector in radians
+func (p Point) Direction() float64 {
+	return math.Atan2(p.Y, p.X)
 }
 
 func (p1 *Point) Distance(p2 *Point) float64 {
