@@ -91,22 +91,22 @@ func (p Point) MultiplyCoords(coords d2.Coords) Point {
 	return p.Multiply(coords.Coords())
 }
 
-func (p1 *Point) AddPoint(p2 *Point) *Point {
-	return &Point{
+func (p1 Point) AddPoint(p2 *Point) Point {
+	return Point{
 		p1.X + p2.X,
 		p1.Y + p2.Y,
 	}
 }
 
-func (p1 *Point) SubtractPoint(p2 *Point) *Point {
-	return &Point{
+func (p1 Point) SubtractPoint(p2 Point) Point {
+	return Point{
 		p1.X - p2.X,
 		p1.Y - p2.Y,
 	}
 }
 
-func (p1 *Point) DividePoint(p2 *Point) *Point {
-	return &Point{
+func (p1 Point) DividePoint(p2 Point) Point {
+	return Point{
 		p1.X / p2.X,
 		p1.Y / p2.Y,
 	}
@@ -126,7 +126,7 @@ func (p Point) Origin() (float64, float64) {
 	return 0, 0
 }
 
-func (p1 *Point) Distance(p2 *Point) float64 {
+func (p1 Point) Distance(p2 Point) float64 {
 	return p1.SubtractPoint(p2).Magnitude()
 }
 

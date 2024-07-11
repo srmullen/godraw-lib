@@ -21,6 +21,14 @@ type Axi struct {
 	}
 }
 
+type Drawer interface {
+	Draw(axi *Axi)
+}
+
+func (axi *Axi) Draw(d Drawer) {
+	d.Draw(axi)
+}
+
 type PathData interface {
 	PathData() string
 }
