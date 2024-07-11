@@ -79,6 +79,10 @@ func NewLine(x1, y1, x2, y2 float64) Line {
 	}
 }
 
+func (l Line) Data() []float64 {
+	return []float64{l.x1, l.y1, l.x2, l.y2}
+}
+
 // Implement the Vector interface
 
 // Magnitude return the length of the line
@@ -90,6 +94,14 @@ func (l Line) Magnitude() float64 {
 func (l Line) Direction() float64 {
 	return math.Atan2(l.y2-l.y1, l.x2-l.x1)
 }
+
+func (l Line) Origin() (float64, float64) {
+	return l.x1, l.y1
+}
+
+// func (l Line) Endpoint() (float64, float64) {
+// 	return l.x2, l.y2
+// }
 
 // Slope-intercept form
 // y = mx + b

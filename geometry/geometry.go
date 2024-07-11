@@ -9,6 +9,7 @@ type Area interface {
 type Vector interface {
 	Magnitude() float64
 	Direction() float64
+	Origin() (float64, float64)
 
 	// Normalize() Vector
 	// ScalarMult(float64) Vector

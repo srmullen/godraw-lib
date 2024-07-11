@@ -112,13 +112,18 @@ func (p1 *Point) DividePoint(p2 *Point) *Point {
 	}
 }
 
-func (p1 *Point) Magnitude() float64 {
+func (p1 Point) Magnitude() float64 {
 	return math.Sqrt(p1.X*p1.X + p1.Y*p1.Y)
 }
 
 // Returns the angle of the vector in radians
 func (p Point) Direction() float64 {
 	return math.Atan2(p.Y, p.X)
+}
+
+// Return the origin of the vector. Always (0, 0) for a point
+func (p Point) Origin() (float64, float64) {
+	return 0, 0
 }
 
 func (p1 *Point) Distance(p2 *Point) float64 {
