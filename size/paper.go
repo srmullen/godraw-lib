@@ -1,4 +1,4 @@
-package lib
+package size
 
 type PaperSize struct {
 	Name   string
@@ -7,30 +7,24 @@ type PaperSize struct {
 	Unit   *Unit
 }
 
-func (ps *PaperSize) Width() *Length {
-	return &Length{
+func (ps *PaperSize) Width() *Size {
+	return &Size{
 		ps.Unit,
 		ps.width,
 	}
 }
 
-func (ps *PaperSize) Height() *Length {
-	return &Length{
+func (ps *PaperSize) Height() *Size {
+	return &Size{
 		ps.Unit,
 		ps.height,
 	}
 }
 
 type Dimensions struct {
-	X *Length
-	Y *Length
+	X *Size
+	Y *Size
 }
-
-// func (ps *PaperSize) Length(unit *Unit) Dimensions {
-// 	return &Dimensions{
-// 		&Length{ps.Unit}
-// 	}
-// }
 
 const (
 	Postcard     = "postcard"

@@ -1,4 +1,4 @@
-package lib
+package size
 
 import (
 	"math"
@@ -39,12 +39,12 @@ var anchors = map[string]anchor{
 	"imperial": {IN, 0.0254},
 }
 
-type Length struct {
+type Size struct {
 	Unit  *Unit
 	Value float64
 }
 
-func (from *Length) To(to *Unit) *Length {
+func (from *Size) To(to *Unit) *Size {
 	if from.Unit == to {
 		return from
 	}
@@ -73,7 +73,7 @@ func (from *Length) To(to *Unit) *Length {
 		result = math.Round(result)
 	}
 
-	return &Length{
+	return &Size{
 		to,
 		result,
 	}
