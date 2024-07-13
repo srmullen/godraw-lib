@@ -13,6 +13,7 @@ type Axi struct {
 	Width    float64
 	Height   float64
 	ctx      *svg.SVG
+	pens     map[string]*Pen
 	pen      *Pen
 	layer    int
 	position struct {
@@ -41,6 +42,7 @@ func NewAxi(width, height float64) *Axi {
 		Width:  width,
 		Height: height,
 		ctx:    s,
+		pens:   make(map[string]*Pen),
 	}
 }
 
@@ -52,17 +54,24 @@ func NewAxiWithWriter(w io.Writer, width, height float64) *Axi {
 		Width:  width,
 		Height: height,
 		ctx:    s,
+		pens:   make(map[string]*Pen),
 	}
 }
 
-func (axi *Axi) WithPen(pen *Pen) {
-	if axi.pen == pen {
+func (axi *Axi) NewPen(name, color string, width float64) *Pen {
+	pen := newPen(name, color, width)
+	axi.pens[name] = pen
+	return pen
+}
+
+func (axi *Axi) WithPen(name string) {
+	if axi.pen != nil && axi.pen.Name == name {
 		return
 	}
 	if axi.pen != nil {
 		axi.UnloadPen()
 	}
-	axi.pen = pen
+	axi.pen = axi.pens[name]
 	axi.layer += 1
 	attrs := []string{
 		"inkscape:groupmode=\"layer\"",
