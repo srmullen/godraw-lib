@@ -44,7 +44,7 @@ type Size struct {
 	Value float64
 }
 
-func (from *Size) To(to *Unit) *Size {
+func (from Size) Convert(to *Unit) Size {
 	if from.Unit == to {
 		return from
 	}
@@ -73,8 +73,12 @@ func (from *Size) To(to *Unit) *Size {
 		result = math.Round(result)
 	}
 
-	return &Size{
+	return Size{
 		to,
 		result,
 	}
+}
+
+func (s Size) To(unit *Unit) float64 {
+	return s.Convert(unit).Value
 }
