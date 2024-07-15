@@ -183,7 +183,7 @@ func (p *Path) Ys() []float64 {
 func (p *Path) Length() float64 {
 	ret := 0.0
 	for i := 1; i < len(p.Segments); i++ {
-		ret += p.Segments[i-1].Distance(&p.Segments[i].Point)
+		ret += p.Segments[i-1].Distance(p.Segments[i].Point)
 	}
 	return ret
 }
