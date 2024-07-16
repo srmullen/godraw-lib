@@ -29,11 +29,11 @@ func (c *Curve) PathData() string {
 func (c *Curve) Translate(x, y float64) *Curve {
 	if c.CubicBezier != nil {
 		return NewCubicBezier(
-			&point.Point{
+			point.Point{
 				X: c.CubicBezier.C1.X + x,
 				Y: c.CubicBezier.C1.Y + y,
 			},
-			&point.Point{
+			point.Point{
 				X: c.CubicBezier.C2.X + x,
 				Y: c.CubicBezier.C2.Y + y,
 			},
@@ -54,11 +54,11 @@ func (c *Curve) Translate(x, y float64) *Curve {
 }
 
 type CubicBezier struct {
-	C1 *point.Point
-	C2 *point.Point
+	C1 point.Point
+	C2 point.Point
 }
 
-func NewCubicBezier(c1, c2 *point.Point) *Curve {
+func NewCubicBezier(c1, c2 point.Point) *Curve {
 	return &Curve{
 		CubicBezier: &CubicBezier{
 			C1: c1,

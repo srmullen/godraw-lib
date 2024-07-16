@@ -17,16 +17,25 @@ type PathData interface {
 
 // A Path is an ordered collection of 2d points
 type Path struct {
-	Segments []*Segment
+	Segments []Segment
 	Closed   bool
 }
 
+// TODO: Implement
+func FromSegments(segments []Segment, closed bool) *Path {
+	// return NewPath([]float64{}, closed)
+	return &Path{
+		segments,
+		closed,
+	}
+}
+
 func NewPath(coords []float64, closed bool) *Path {
-	segments := make([]*Segment, 0)
+	segments := make([]Segment, 0)
 	for i := 0; i < len(coords); i += 2 {
 		x := coords[i]
 		y := coords[i+1]
-		segments = append(segments, &Segment{
+		segments = append(segments, Segment{
 			Point: point.NewPoint(x, y),
 			Curve: nil,
 		})
@@ -45,20 +54,24 @@ func NewClosedPath(coords []float64) *Path {
 	return NewPath(coords, true)
 }
 
-func (p *Path) Segment(i int) *Segment {
+func (p *Path) Segment(i int) Segment {
 	return p.Segments[i]
 }
 
 func (p *Path) PathData() string {
 	ret := ""
+
 	for i, segment := range p.Segments {
 		if i == 0 {
 			// Move to: starts a new path
 			ret += "M"
-			ret += fmt.Sprintf("%d %d", int(math.Round(segment.X)), int(math.Round(segment.Y)))
-		} else if segment.Curve != nil {
+			ret += fmt.Sprintf("%d %d ", int(math.Round(segment.X)), int(math.Round(segment.Y)))
+		} else {
+			ret += fmt.Sprintf(" %d %d ", int(math.Round(segment.X)), int(math.Round(segment.Y)))
+		}
+
+		if segment.Curve != nil {
 			ret += segment.Curve.PathData()
-			ret += fmt.Sprintf("%d %d", int(math.Round(segment.X)), int(math.Round(segment.Y)))
 		} else {
 			// Line to: continues the path
 			ret += "L"
@@ -74,7 +87,7 @@ func (p *Path) PathData() string {
 
 func PathTranslate(path *Path, x, y float64) *Path {
 	ret := &Path{
-		Segments: make([]*Segment, len(path.Segments)),
+		Segments: make([]Segment, len(path.Segments)),
 		Closed:   path.Closed,
 	}
 	for i, segment := range path.Segments {
@@ -82,7 +95,7 @@ func PathTranslate(path *Path, x, y float64) *Path {
 		if segment.Curve != nil {
 			curve = segment.Curve.Translate(x, y)
 		}
-		ret.Segments[i] = &Segment{
+		ret.Segments[i] = Segment{
 			point.Point{
 				X: segment.X + x,
 				Y: segment.Y + y,
@@ -125,10 +138,10 @@ func (p *Path) GetBounds() *bounds.Bounds {
 	}
 }
 
-func ScaleSegments(segments []*Segment, scalex, scaley float64) []*Segment {
-	ret := make([]*Segment, len(segments))
+func ScaleSegments(segments []Segment, scalex, scaley float64) []Segment {
+	ret := make([]Segment, len(segments))
 	for i, segment := range segments {
-		ret[i] = &Segment{
+		ret[i] = Segment{
 			Point: *segment.Hadamard(&point.Point{X: scalex, Y: scaley}),
 			Curve: segment.Curve,
 		}
@@ -138,7 +151,7 @@ func ScaleSegments(segments []*Segment, scalex, scaley float64) []*Segment {
 
 func (path *Path) Translate(x, y float64) *Path {
 	ret := &Path{
-		Segments: make([]*Segment, len(path.Segments)),
+		Segments: make([]Segment, len(path.Segments)),
 		Closed:   path.Closed,
 	}
 	for i, segment := range path.Segments {
@@ -146,7 +159,7 @@ func (path *Path) Translate(x, y float64) *Path {
 		if segment.Curve != nil {
 			curve = segment.Curve.Translate(x, y)
 		}
-		ret.Segments[i] = &Segment{
+		ret.Segments[i] = Segment{
 			point.Point{
 				X: segment.X + x,
 				Y: segment.Y + y,
