@@ -142,7 +142,7 @@ func ScaleSegments(segments []Segment, scalex, scaley float64) []Segment {
 	ret := make([]Segment, len(segments))
 	for i, segment := range segments {
 		ret[i] = Segment{
-			Point: *segment.Hadamard(&point.Point{X: scalex, Y: scaley}),
+			Point: segment.Hadamard(point.Point{X: scalex, Y: scaley}),
 			Curve: segment.Curve,
 		}
 	}
