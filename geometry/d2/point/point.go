@@ -134,19 +134,23 @@ func (p Point) Normalize() Point {
 	return p.ScalarMult(1 / p.Magnitude())
 }
 
-func (p1 *Point) Dot(p2 *Point) float64 {
+func (p Point) Normal() Point {
+	return NewPoint(p.Y, -p.X)
+}
+
+func (p1 Point) Dot(p2 Point) float64 {
 	return p1.X*p2.X + p1.Y*p2.Y
 }
 
-func (p1 *Point) Cross(p2 *Point) *Point {
-	return &Point{
+func (p1 Point) Cross(p2 Point) Point {
+	return Point{
 		p1.X*p2.Y - p1.Y*p2.X,
 		p1.X*p2.Y - p1.Y*p2.X,
 	}
 }
 
-func (p1 *Point) Hadamard(p2 *Point) *Point {
-	return &Point{
+func (p1 Point) Hadamard(p2 Point) Point {
+	return Point{
 		p1.X * p2.X,
 		p1.Y * p2.Y,
 	}
