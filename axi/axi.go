@@ -107,6 +107,10 @@ func (axi *Axi) Circle(x, y, r float64) {
 	axi.ctx.Circle(int(x), int(y), int(r), fmt.Sprintf("fill:none;stroke:%s;stroke-width:%f", axi.pen.Color, axi.pen.Width))
 }
 
+func (axi *Axi) Rect(x, y, w, h float64) {
+	axi.ctx.Rect(int(x), int(y), int(w), int(h), fmt.Sprintf("fill:none;stroke:%s;stroke-width:%f", axi.pen.Color, axi.pen.Width))
+}
+
 func (axi *Axi) SVGPath(path string) {
 	axi.ctx.Path(path, fmt.Sprintf("fill:none;stroke:%s;stroke-width:%f", axi.pen.Color, axi.pen.Width))
 }

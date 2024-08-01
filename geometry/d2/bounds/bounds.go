@@ -1,16 +1,26 @@
 package bounds
 
-// import "godraw/lib/geometry/d2/point"
 import (
 	"github.com/srmullen/godraw-lib/geometry/d2"
 	"github.com/srmullen/godraw-lib/geometry/d2/point"
 )
 
+type Bounded interface {
+	Bounds() Bounds
+}
+
+// FIXME: This doesn't scale to higher dimensions. Should use x,y,z instead of top, right, bottom, left
 type Bounds struct {
 	Top    float64
 	Right  float64
 	Bottom float64
 	Left   float64
+}
+
+func NewBounds(top, right, bottom, left float64) Bounds {
+	return Bounds{
+		top, right, bottom, left,
+	}
 }
 
 func (bounds *Bounds) Width() float64 {
@@ -87,15 +97,21 @@ func (b *Bounds) Intersects(bounds *Bounds) bool {
 	return b.ContainsPoint(bounds.TopLeft()) || b.ContainsPoint(bounds.BottomRight()) || b.ContainsPoint(bounds.TopRight()) || b.ContainsPoint(bounds.BottomLeft())
 }
 
-// FIXME: This doesn't capture the situation where the bounds form a cross.
-func (b *Bounds) Overlaps(bounds *Bounds) bool {
-	// return b.Intersects(bounds) ||
-	// 	b.ContainsBounds(bounds) ||
-	// 	bounds.ContainsBounds(b) ||
-	return bounds.Left+bounds.Width() > b.Left &&
-		bounds.Top+bounds.Height() > b.Top &&
-		bounds.Left < b.Left+b.Width() &&
-		bounds.Top < b.Top+b.Height()
+func (b Bounds) Overlaps(bounds Bounds) bool {
+	return Overlap(b, bounds)
+}
+
+func (b Bounds) Bounds() Bounds {
+	return b
+}
+
+func Overlap(bounds1, bounds2 Bounded) bool {
+	b1 := bounds1.Bounds()
+	b2 := bounds2.Bounds()
+	return b2.Left+b2.Width() > b1.Left &&
+		b2.Top+b2.Height() > b1.Top &&
+		b2.Left < b1.Left+b1.Width() &&
+		b2.Top < b1.Top+b1.Height()
 }
 
 func (b *Bounds) ScalePoint(pnt *point.Point) *point.Point {

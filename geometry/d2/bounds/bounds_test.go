@@ -165,14 +165,14 @@ func TestIntersect(t *testing.T) {
 
 func TestOverlaps(t *testing.T) {
 	t.Run("Overlaps", func(t *testing.T) {
-		b1 := &Bounds{
+		b1 := Bounds{
 			Top:    0,
 			Right:  1,
 			Bottom: 1,
 			Left:   0,
 		}
 
-		b2 := &Bounds{
+		b2 := Bounds{
 			Top:    0.5,
 			Right:  1.5,
 			Bottom: 1.5,
@@ -183,14 +183,14 @@ func TestOverlaps(t *testing.T) {
 	})
 
 	t.Run("Does not overlap", func(t *testing.T) {
-		b1 := &Bounds{
+		b1 := Bounds{
 			Top:    0,
 			Right:  1,
 			Bottom: 1,
 			Left:   0,
 		}
 
-		b2 := &Bounds{
+		b2 := Bounds{
 			Top:    2.5,
 			Right:  3.5,
 			Bottom: 3.5,
@@ -201,14 +201,14 @@ func TestOverlaps(t *testing.T) {
 	})
 
 	t.Run("Overlaps on edge", func(t *testing.T) {
-		b1 := &Bounds{
+		b1 := Bounds{
 			Top:    0,
 			Right:  1,
 			Bottom: 1,
 			Left:   0,
 		}
 
-		b2 := &Bounds{
+		b2 := Bounds{
 			Top:    0,
 			Right:  2,
 			Bottom: 1,
@@ -219,14 +219,14 @@ func TestOverlaps(t *testing.T) {
 	})
 
 	t.Run("Overlaps on TopLeft/BottomRight corner", func(t *testing.T) {
-		b1 := &Bounds{
+		b1 := Bounds{
 			Top:    0,
 			Right:  2,
 			Bottom: 2,
 			Left:   0,
 		}
 
-		b2 := &Bounds{
+		b2 := Bounds{
 			Top:    1,
 			Right:  3,
 			Bottom: 3,
@@ -237,14 +237,14 @@ func TestOverlaps(t *testing.T) {
 	})
 
 	t.Run("Overlaps on TopRight/BottomLeft corner", func(t *testing.T) {
-		b1 := &Bounds{
+		b1 := Bounds{
 			Top:    0,
 			Right:  4,
 			Bottom: 2,
 			Left:   2,
 		}
 
-		b2 := &Bounds{
+		b2 := Bounds{
 			Top:    1,
 			Right:  3,
 			Bottom: 3,
@@ -255,18 +255,36 @@ func TestOverlaps(t *testing.T) {
 	})
 
 	t.Run("Only bounds interiors overlap", func(t *testing.T) {
-		b1 := &Bounds{
+		b1 := Bounds{
 			Top:    2,
 			Left:   2,
 			Right:  3,
 			Bottom: 6,
 		}
 
-		b2 := &Bounds{
+		b2 := Bounds{
 			Top:    3,
 			Left:   1,
 			Bottom: 4,
 			Right:  4,
+		}
+		assert.True(t, b1.Overlaps(b2))
+		assert.True(t, b2.Overlaps(b1))
+	})
+
+	t.Run("Only bounds interiors overlap", func(t *testing.T) {
+		b1 := Bounds{
+			Top:    1,
+			Left:   1,
+			Right:  4,
+			Bottom: 2,
+		}
+
+		b2 := Bounds{
+			Top:    0,
+			Left:   2,
+			Bottom: 4,
+			Right:  3,
 		}
 		assert.True(t, b1.Overlaps(b2))
 		assert.True(t, b2.Overlaps(b1))

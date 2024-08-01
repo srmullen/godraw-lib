@@ -205,7 +205,7 @@ func (p *Path) Length() float64 {
 func (p *Path) GetIntersections(other *Path) []point.Point {
 	var intersections []point.Point
 	// If bounds don't intersect, then there are no intersections
-	if !p.GetBounds().Overlaps(other.GetBounds()) {
+	if !p.GetBounds().Overlaps(*other.GetBounds()) {
 		return intersections
 	}
 	for i := 0; i < len(p.Segments); i++ {

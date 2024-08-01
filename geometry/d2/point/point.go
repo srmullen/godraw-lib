@@ -26,8 +26,8 @@ func NewPointFromAngle(radians, magnitude float64) Point {
 	}
 }
 
-func (p *Point) Rotate(radians float64) *Point {
-	return &Point{
+func (p Point) Rotate(radians float64) Point {
+	return Point{
 		p.X*math.Cos(radians) - p.Y*math.Sin(radians),
 		p.X*math.Sin(radians) + p.Y*math.Cos(radians),
 	}
@@ -37,7 +37,7 @@ func (p Point) Coords() (float64, float64) {
 	return p.X, p.Y
 }
 
-func (p Point) Equals(other *Point) bool {
+func (p Point) Equals(other Point) bool {
 	return p.X == other.X && p.Y == other.Y
 }
 
@@ -91,7 +91,7 @@ func (p Point) MultiplyCoords(coords d2.Coords) Point {
 	return p.Multiply(coords.Coords())
 }
 
-func (p1 Point) AddPoint(p2 *Point) Point {
+func (p1 Point) AddPoint(p2 Point) Point {
 	return Point{
 		p1.X + p2.X,
 		p1.Y + p2.Y,

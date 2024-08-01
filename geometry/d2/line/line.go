@@ -70,6 +70,10 @@ type Line struct {
 	x1, y1, x2, y2 float64
 }
 
+func (l Line) GetIntersection(l2 Line) (x, y float64, ok bool) {
+	return GetIntersection(l.x1, l.y1, l.x2, l.y2, l2.x1, l2.y1, l2.x2, l2.y2)
+}
+
 func NewLine(x1, y1, x2, y2 float64) Line {
 	return Line{
 		x1: x1,
@@ -81,6 +85,16 @@ func NewLine(x1, y1, x2, y2 float64) Line {
 
 func (l Line) Data() []float64 {
 	return []float64{l.x1, l.y1, l.x2, l.y2}
+}
+
+func (l Line) PointSlopeForm(x float64) float64 {
+	m := (l.y2 - l.y1) / (l.x2 - l.x1)
+	b := l.y1 - m*l.x1
+	return m*x + b
+}
+
+func (l Line) M() float64 {
+	return (l.y2 - l.y1) / (l.x2 - l.x1)
 }
 
 // Implement the Vector interface
@@ -98,58 +112,3 @@ func (l Line) Direction() float64 {
 func (l Line) Origin() (float64, float64) {
 	return l.x1, l.y1
 }
-
-// func (l Line) Endpoint() (float64, float64) {
-// 	return l.x2, l.y2
-// }
-
-// Slope-intercept form
-// y = mx + b
-
-// Point-slope form
-// y - b = m(x - a)
-
-// func NewLine(a, b, c float64) *Line {
-// 	return &Line{
-// 		A: a,
-// 		B: b,
-// 		C: c,
-// 	}
-// }
-
-// func FromPointSlope(x, y, m float64) *Line {
-// 	return &Line{
-// 		A: m,
-// 		B: -1,
-// 		C: y - m*x,
-// 	}
-// }
-
-// func FromTwoPoints(x1, y1, x2, y2 float64) *Line {
-// 	return &Line{
-// 		A: y1 - y2,
-// 		B: x2 - x1,
-// 		C: x1*y2 - x2*y1,
-// 	}
-// }
-
-// FromRadians returns a line that passes through the point (x, y) and has the given angle in radians
-// func FromRadians(x, y, radians float64) *Line {
-// 	return &Line{
-// 		A: -math.Sin(radians),
-// 		B: math.Cos(radians),
-// 		C: x*math.Sin(radians) - y*math.Cos(radians),
-// 	}
-// // }
-
-// func (line *Line) Y(x float64) float64 {
-// 	return (line.C - line.A*x) / line.B
-// }
-
-// func (line *Line) X(y float64) float64 {
-// 	return (line.C - line.B*y) / line.A
-// }
-
-// func (line *Line) XY(x, y float64) (float64, float64) {
-// 	return line.X(y), line.Y(x)
-// }
