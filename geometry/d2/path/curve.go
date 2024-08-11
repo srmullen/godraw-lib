@@ -7,6 +7,12 @@ import (
 	"github.com/srmullen/godraw-lib/geometry/d2/point"
 )
 
+func CubicBezierPolynomialInterpolation(p1, p2, p3, p4 point.Point, t float64) (float64, float64) {
+	x := p1.X + t*(-3*p1.X+3*p2.X) + t*t*(3*p1.X+-6*p2.X+3*p3.X) + t*t*t*(-p1.X+3*p2.X+-3*p3.X+p4.X)
+	y := p1.Y + t*(-3*p1.Y+3*p2.Y) + t*t*(3*p1.Y+-6*p2.Y+3*p3.Y) + t*t*t*(-p1.Y+3*p2.Y+-3*p3.Y+p4.Y)
+	return x, y
+}
+
 type Curve struct {
 	*CubicBezier
 	*QuadraticBezier
@@ -53,6 +59,17 @@ func (c *Curve) Translate(x, y float64) *Curve {
 	return nil
 }
 
+func (c *Curve) Interpolate(p1, p2 point.Point, t float64) (float64, float64) {
+	if c.CubicBezier != nil {
+		return c.CubicBezier.Interpolate(p1, p2, t)
+	} else if c.QuadraticBezier != nil {
+		return c.QuadraticBezier.Interpolate(p1, p2, t)
+	} else if c.Arc != nil {
+		return c.Arc.Interpolate(p1, p2, t)
+	}
+	return 0, 0
+}
+
 type CubicBezier struct {
 	C1 point.Point
 	C2 point.Point
@@ -74,6 +91,10 @@ func (c *CubicBezier) PathData() string {
 	return ret
 }
 
+func (c *CubicBezier) Interpolate(p1, p2 point.Point, t float64) (float64, float64) {
+	return CubicBezierPolynomialInterpolation(p1, c.C1, c.C2, p2, t)
+}
+
 type QuadraticBezier struct {
 	C *point.Point
 }
@@ -93,6 +114,13 @@ func (q *QuadraticBezier) PathData() string {
 	ret := "Q"
 	ret += fmt.Sprintf("%d %d ", int(math.Round(q.C.X)), int(math.Round(q.C.Y)))
 	return ret
+}
+
+// TODO: Written by copilot. Need to verify
+func (q *QuadraticBezier) Interpolate(p1, p2 point.Point, t float64) (float64, float64) {
+	x := (1-t)*(1-t)*p1.X + 2*(1-t)*t*q.C.X + t*t*p2.X
+	y := (1-t)*(1-t)*p1.Y + 2*(1-t)*t*q.C.Y + t*t*p2.Y
+	return x, y
 }
 
 type Arc struct {
@@ -129,6 +157,11 @@ func (a *Arc) PathData() string {
 		ret += "0 "
 	}
 	return ret
+}
+
+// TODO: Needs implementation. Need to figure out how arc is calculated.
+func (a *Arc) Interpolate(p1, p2 point.Point, t float64) (float64, float64) {
+	return 0, 0
 }
 
 func (c1 *Curve) GetIntersections(c2 *Curve) {

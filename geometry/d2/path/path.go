@@ -232,3 +232,18 @@ func (p *Path) Points() []point.Point {
 	}
 	return ret
 }
+
+// Interpolate returns the x, y coordinates of the point at t along the path
+// t is a value between 0 and len(p.Segments)
+// the number to the left of the decimal point is the index of the segment
+// the number to the right of the decimal point is the interpolation value
+func (p *Path) Interpolate(t float64) (float64, float64) {
+	if t < 0 || t > float64(len(p.Segments)) {
+		return 0, 0
+	}
+	segmentIndex := int(t)
+	segment := p.Segments[segmentIndex]
+	next := p.Segments[(segmentIndex+1)%len(p.Segments)]
+	v := t - float64(segmentIndex)
+	return segment.Interpolate(next.Point, v)
+}

@@ -19,8 +19,8 @@ func NewSegment(x, y float64) Segment {
 	}
 }
 
-func NewCubicBezierSegment(p, ctrlIn, ctrlOut point.Point) Segment {
-	curve := NewCubicBezier(ctrlIn, ctrlOut)
+func NewCubicBezierSegment(p, c1, c2 point.Point) Segment {
+	curve := NewCubicBezier(c1, c2)
 	return Segment{
 		Point: p,
 		Curve: curve,
@@ -31,5 +31,16 @@ func (s Segment) Scale(m float64) Segment {
 	return Segment{
 		Point: s.Point.ScalarMult(m),
 		Curve: s.Curve,
+	}
+}
+
+func (s Segment) Interpolate(to point.Point, t float64) (float64, float64) {
+	if s.Curve == nil {
+		x := s.X + t*(to.X-s.X)
+		y := s.Y + t*(to.Y-s.Y)
+		return x, y
+	} else {
+		// TODO: Need to handle Quadratic and Arc curves
+		return s.Curve.Interpolate(s.Point, to, t)
 	}
 }
