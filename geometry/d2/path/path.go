@@ -2,7 +2,6 @@ package path
 
 import (
 	"fmt"
-	"log"
 	"math"
 
 	"github.com/srmullen/godraw-lib/geometry/d2/bounds"
@@ -193,10 +192,19 @@ func (p *Path) Ys() []float64 {
 	return ret
 }
 
+// Length returns the total length of the path
+// TODO: This does not take curves into account.
 func (p *Path) Length() float64 {
 	ret := 0.0
-	for i := 1; i < len(p.Segments); i++ {
-		ret += p.Segments[i-1].Distance(p.Segments[i].Point)
+	var nSegments int
+	if p.Closed {
+		nSegments = len(p.Segments)
+	} else {
+		nSegments = len(p.Segments) - 1
+	}
+	for i := 0; i < nSegments; i++ {
+		to := p.Segments[(i+1)%len(p.Segments)].Point
+		ret += p.Segments[i].Length(to)
 	}
 	return ret
 }
@@ -212,7 +220,7 @@ func (p *Path) GetIntersections(other *Path) []point.Point {
 		from := p.Segments[i].Point
 		to := p.Segments[(i+1)%len(p.Segments)].Point
 		for j := 0; j < len(other.Segments); j++ {
-			log.Println("i", i, "j", j)
+			// log.Println("i", i, "j", j)
 			jFrom := other.Segments[j].Point
 			jTo := other.Segments[(j+1)%len(other.Segments)].Point
 			// intersection := segment.Point.Intersection(other.Segments[j].Point)

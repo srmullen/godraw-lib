@@ -13,6 +13,36 @@ func CubicBezierPolynomialInterpolation(p1, p2, p3, p4 point.Point, t float64) (
 	return x, y
 }
 
+func CubicBezierLength(c1, c2, c3, c4 point.Point) float64 {
+	epsilon := 1e-6
+	chord := c1.Distance(c4)
+	control := c1.Distance(c2) + c2.Distance(c3) + c3.Distance(c4)
+	if control-chord <= epsilon {
+		return (chord + control) / 2
+	}
+	left, right := Subdivide([]point.Point{c1, c2, c3, c4}, 0.5)
+	return CubicBezierLength(left[0], left[1], left[2], left[3]) + CubicBezierLength(right[0], right[1], right[2], right[3])
+}
+
+func Subdivide(b []point.Point, t float64) ([]point.Point, []point.Point) {
+	p01 := interpolate(b[0], b[1], t)
+	p12 := interpolate(b[1], b[2], t)
+	p23 := interpolate(b[2], b[3], t)
+	p012 := interpolate(p01, p12, t)
+	p123 := interpolate(p12, p23, t)
+	p0123 := interpolate(p012, p123, t)
+
+	return []point.Point{b[0], p01, p012, p0123},
+		[]point.Point{p0123, p123, p23, b[3]}
+}
+
+func interpolate(p1, p2 point.Point, t float64) point.Point {
+	return point.NewPoint(
+		p1.X*(1-t)+p2.X*t,
+		p1.Y*(1-t)+p2.Y*t,
+	)
+}
+
 type Curve struct {
 	*CubicBezier
 	*QuadraticBezier
@@ -45,12 +75,9 @@ func (c *Curve) Translate(x, y float64) *Curve {
 			},
 		)
 	} else if c.QuadraticBezier != nil {
-		var control *point.Point = nil
-		if c.QuadraticBezier.C != nil {
-			control = &point.Point{
-				X: c.QuadraticBezier.C.X + x,
-				Y: c.QuadraticBezier.C.Y + y,
-			}
+		control := point.Point{
+			X: c.QuadraticBezier.C.X + x,
+			Y: c.QuadraticBezier.C.Y + y,
 		}
 		return NewQuadraticBezier(control)
 	} else if c.Arc != nil {
@@ -68,6 +95,20 @@ func (c *Curve) Interpolate(p1, p2 point.Point, t float64) (float64, float64) {
 		return c.Arc.Interpolate(p1, p2, t)
 	}
 	return 0, 0
+}
+
+func (c *Curve) Length(p1, p2 point.Point) float64 {
+	if c.CubicBezier != nil {
+		// return c.CubicBezier.Length(p1, p2)
+		return CubicBezierLength(p1, c.CubicBezier.C1, c.CubicBezier.C2, p2)
+	} else if c.QuadraticBezier != nil {
+		// return c.QuadraticBezier.Length(p1, p2)
+		return 0
+	} else if c.Arc != nil {
+		// return c.Arc.Length(p1, p2)
+		return 0
+	}
+	return 0
 }
 
 type CubicBezier struct {
@@ -96,10 +137,10 @@ func (c *CubicBezier) Interpolate(p1, p2 point.Point, t float64) (float64, float
 }
 
 type QuadraticBezier struct {
-	C *point.Point
+	C point.Point
 }
 
-func NewQuadraticBezier(c *point.Point) *Curve {
+func NewQuadraticBezier(c point.Point) *Curve {
 	return &Curve{
 		QuadraticBezier: &QuadraticBezier{
 			C: c,
@@ -108,9 +149,6 @@ func NewQuadraticBezier(c *point.Point) *Curve {
 }
 
 func (q *QuadraticBezier) PathData() string {
-	if q.C == nil {
-		return "T"
-	}
 	ret := "Q"
 	ret += fmt.Sprintf("%d %d ", int(math.Round(q.C.X)), int(math.Round(q.C.Y)))
 	return ret

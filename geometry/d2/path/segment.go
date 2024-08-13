@@ -44,3 +44,11 @@ func (s Segment) Interpolate(to point.Point, t float64) (float64, float64) {
 		return s.Curve.Interpolate(s.Point, to, t)
 	}
 }
+
+func (s Segment) Length(to point.Point) float64 {
+	if s.Curve == nil {
+		return s.Distance(to)
+	} else {
+		return s.Curve.Length(s.Point, to)
+	}
+}
