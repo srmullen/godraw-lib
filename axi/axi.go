@@ -10,13 +10,15 @@ import (
 )
 
 type Axi struct {
-	Width    float64
-	Height   float64
-	ctx      *svg.SVG
-	pens     map[string]*Pen
-	pen      *Pen
-	layer    int
-	position struct {
+	Width       float64
+	Height      float64
+	ctx         *svg.SVG
+	pens        map[string]*Pen
+	pen         *Pen
+	layers      map[string]*Layer
+	activeLayer *Layer
+	layer       int
+	position    struct {
 		X float64
 		Y float64
 	}
@@ -35,15 +37,54 @@ type PathData interface {
 }
 
 func NewAxi(width, height float64) *Axi {
-	s := svg.New(os.Stdout)
-	s.Start(int(width), int(height), "xmlns:inkscape=\"http://www.inkscape.org/namespaces/inkscape\"")
+	// ctx := svg.New(os.Stdout)
+	// ctx.Start(int(width), int(height), "xmlns:inkscape=\"http://www.inkscape.org/namespaces/inkscape\"")
 
-	return &Axi{
+	axi := &Axi{
 		Width:  width,
 		Height: height,
-		ctx:    s,
+		// ctx:    ctx,
 		pens:   make(map[string]*Pen),
+		layers: make(map[string]*Layer),
 	}
+
+	// Create default pen and layer
+	axi.NewPen("default", "black", 1)
+	axi.NewLayer("default", "default")
+
+	return axi
+}
+
+func (axi *Axi) Done() {
+	ctx := svg.New(os.Stdout)
+	ctx.Start(int(axi.Width), int(axi.Height), "xmlns:inkscape=\"http://www.inkscape.org/namespaces/inkscape\"")
+
+	axi.ctx = ctx
+
+	// if axi.pen != nil {
+	// 	axi.UnloadPen()
+	// }
+
+	// Iterate over layers and render the items they contain
+	for _, layer := range axi.layers {
+		// Create the Group for the layer
+		if len(layer.Items) == 0 {
+			continue
+		}
+		axi.WithPen(layer.Pen)
+		attrs := []string{
+			"inkscape:groupmode=\"layer\"",
+			fmt.Sprintf("id=\"layer%d\"", axi.layer),
+			fmt.Sprintf("inkscape:label=\"%d-%s\"", axi.layer, axi.pen.Name),
+		}
+		axi.ctx.Group(strings.Join(attrs, " "))
+		// Render the items
+		for _, item := range layer.Items {
+			item.Draw(axi)
+		}
+		axi.ctx.Gend()
+	}
+	axi.ctx.End()
 }
 
 func NewAxiWithWriter(w io.Writer, width, height float64) *Axi {
@@ -64,33 +105,21 @@ func (axi *Axi) NewPen(name, color string, width float64) *Pen {
 	return pen
 }
 
+// Creates a Layer and Pen with the same name and associates them
+func (axi *Axi) NewPenLayer(name, color string, width float64) {
+	pen := axi.NewPen(name, color, width)
+	axi.NewLayer(name, pen.Name)
+}
+
+func (axi *Axi) OnLayer(name string) {
+	axi.activeLayer = axi.layers[name]
+}
+
 func (axi *Axi) WithPen(name string) {
 	if axi.pen != nil && axi.pen.Name == name {
 		return
 	}
-	if axi.pen != nil {
-		axi.UnloadPen()
-	}
 	axi.pen = axi.pens[name]
-	axi.layer += 1
-	attrs := []string{
-		"inkscape:groupmode=\"layer\"",
-		fmt.Sprintf("id=\"layer%d\"", axi.layer),
-		fmt.Sprintf("inkscape:label=\"%d-%s\"", axi.layer, axi.pen.Name),
-	}
-	axi.ctx.Group(strings.Join(attrs, " "))
-}
-
-func (axi *Axi) UnloadPen() {
-	axi.pen = nil
-	axi.ctx.Gend()
-}
-
-func (axi *Axi) Done() {
-	if axi.pen != nil {
-		axi.UnloadPen()
-	}
-	axi.ctx.End()
 }
 
 func (axi *Axi) Pen() *Pen {
@@ -100,23 +129,37 @@ func (axi *Axi) Pen() *Pen {
 // Drawing functions
 
 func (axi *Axi) Line(x1, y1, x2, y2 float64) {
-	axi.ctx.Line(int(x1), int(y1), int(x2), int(y2), fmt.Sprintf("stroke:%s;stroke-width:%f", axi.pen.Color, axi.pen.Width))
+	item := Line{x1, y1, x2, y2}
+	axi.drawItem(item)
 }
 
 func (axi *Axi) Circle(x, y, r float64) {
-	axi.ctx.Circle(int(x), int(y), int(r), fmt.Sprintf("fill:none;stroke:%s;stroke-width:%f", axi.pen.Color, axi.pen.Width))
+	item := Circle{x, y, r}
+	axi.drawItem(item)
 }
 
 func (axi *Axi) Rect(x, y, w, h float64) {
-	axi.ctx.Rect(int(x), int(y), int(w), int(h), fmt.Sprintf("fill:none;stroke:%s;stroke-width:%f", axi.pen.Color, axi.pen.Width))
+	item := Rect{x, y, w, h}
+	axi.drawItem(item)
 }
 
-func (axi *Axi) SVGPath(path string) {
-	axi.ctx.Path(path, fmt.Sprintf("fill:none;stroke:%s;stroke-width:%f", axi.pen.Color, axi.pen.Width))
+func (axi *Axi) drawItem(item Drawer) {
+	if axi.ctx == nil {
+		axi.activeLayer.Draw(item)
+	} else {
+		// Rendering Phase
+		item.Draw(axi)
+	}
 }
+
+// func (axi *Axi) SVGPath(path string) {
+// 	axi.ctx.Path(path, fmt.Sprintf("fill:none;stroke:%s;stroke-width:%f", axi.pen.Color, axi.pen.Width))
+// }
 
 func (axi *Axi) Path(p PathData) {
-	axi.SVGPath(p.PathData())
+	path := Path{p.PathData()}
+	axi.drawItem(path)
+	// axi.SVGPath(p.PathData())
 }
 
 func (axi *Axi) Paths(p []PathData) {

@@ -122,7 +122,7 @@ func NewNgon(sides int, x, y, radius float64) *Polygon {
 func (p *Polygon) GetIntersections(other *Polygon) Points {
 	intersections := Points{}
 	// If bounds don't intersect, then there are no intersections
-	if !p.GetBounds().Overlaps(other.GetBounds()) {
+	if !p.GetBounds().Overlaps(*other.GetBounds()) {
 		return intersections
 	}
 	for i := 0; i < len(p.Segments); i++ {
