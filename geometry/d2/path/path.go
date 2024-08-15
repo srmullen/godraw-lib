@@ -246,11 +246,11 @@ func (p *Path) Points() []point.Point {
 // the number to the left of the decimal point is the index of the segment
 // the number to the right of the decimal point is the interpolation value
 func (p *Path) Interpolate(t float64) (float64, float64) {
-	if t < 0 || t > float64(len(p.Segments)) {
+	if t < 0 {
 		return 0, 0
 	}
 	segmentIndex := int(t)
-	segment := p.Segments[segmentIndex]
+	segment := p.Segments[segmentIndex%len(p.Segments)]
 	next := p.Segments[(segmentIndex+1)%len(p.Segments)]
 	v := t - float64(segmentIndex)
 	return segment.Interpolate(next.Point, v)

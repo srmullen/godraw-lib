@@ -74,8 +74,8 @@ func (axi *Axi) Done() {
 		axi.WithPen(layer.Pen)
 		attrs := []string{
 			"inkscape:groupmode=\"layer\"",
-			fmt.Sprintf("id=\"layer%d\"", axi.layer),
-			fmt.Sprintf("inkscape:label=\"%d-%s\"", axi.layer, axi.pen.Name),
+			fmt.Sprintf("id=\"layer%d\"", layer.Index),
+			fmt.Sprintf("inkscape:label=\"%d-%s\"", layer.Index, axi.pen.Name),
 		}
 		axi.ctx.Group(strings.Join(attrs, " "))
 		// Render the items
