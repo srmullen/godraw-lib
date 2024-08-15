@@ -37,13 +37,9 @@ type PathData interface {
 }
 
 func NewAxi(width, height float64) *Axi {
-	// ctx := svg.New(os.Stdout)
-	// ctx.Start(int(width), int(height), "xmlns:inkscape=\"http://www.inkscape.org/namespaces/inkscape\"")
-
 	axi := &Axi{
 		Width:  width,
 		Height: height,
-		// ctx:    ctx,
 		pens:   make(map[string]*Pen),
 		layers: make(map[string]*Layer),
 	}
@@ -60,10 +56,6 @@ func (axi *Axi) Done() {
 	ctx.Start(int(axi.Width), int(axi.Height), "xmlns:inkscape=\"http://www.inkscape.org/namespaces/inkscape\"")
 
 	axi.ctx = ctx
-
-	// if axi.pen != nil {
-	// 	axi.UnloadPen()
-	// }
 
 	// Iterate over layers and render the items they contain
 	for _, layer := range axi.layers {
@@ -152,14 +144,9 @@ func (axi *Axi) drawItem(item Drawer) {
 	}
 }
 
-// func (axi *Axi) SVGPath(path string) {
-// 	axi.ctx.Path(path, fmt.Sprintf("fill:none;stroke:%s;stroke-width:%f", axi.pen.Color, axi.pen.Width))
-// }
-
 func (axi *Axi) Path(p PathData) {
 	path := Path{p.PathData()}
 	axi.drawItem(path)
-	// axi.SVGPath(p.PathData())
 }
 
 func (axi *Axi) Paths(p []PathData) {
