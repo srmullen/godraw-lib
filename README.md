@@ -6,7 +6,7 @@ Drawing library.
 TODO
 ----
 
-- Implement Layers
+- Path.GetBounds needs to take curves into account.
 
 
 Refactor

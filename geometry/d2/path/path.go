@@ -106,7 +106,7 @@ func PathTranslate(path *Path, x, y float64) *Path {
 }
 
 // Bounds returns the bounding box of the path
-// TODO: This does not take curves into account.a
+// FIXME: This does not take curves into account.
 func (p *Path) GetBounds() *bounds.Bounds {
 	if p == nil || len(p.Segments) == 0 {
 		return nil
@@ -220,7 +220,6 @@ func (p *Path) GetIntersections(other *Path) []point.Point {
 		from := p.Segments[i].Point
 		to := p.Segments[(i+1)%len(p.Segments)].Point
 		for j := 0; j < len(other.Segments); j++ {
-			// log.Println("i", i, "j", j)
 			jFrom := other.Segments[j].Point
 			jTo := other.Segments[(j+1)%len(other.Segments)].Point
 			// intersection := segment.Point.Intersection(other.Segments[j].Point)
