@@ -7,6 +7,7 @@ import (
 	"github.com/srmullen/godraw-lib/geometry/d2/bounds"
 	"github.com/srmullen/godraw-lib/geometry/d2/line"
 	"github.com/srmullen/godraw-lib/geometry/d2/point"
+	"github.com/srmullen/godraw-lib/util"
 )
 
 // https://www.w3.org/TR/SVG11/paths.html
@@ -79,7 +80,16 @@ func (p *Path) PathData() string {
 	}
 	if p.Closed {
 		// Close path: draws a line from the last point to the first point
-		ret += "Z"
+		// https://stackoverflow.com/questions/10200611/close-svg-path-z-with-control-points
+		// Need to manually create final point if the path is closed.
+		last := p.Segments[len(p.Segments)-1]
+		if last.Curve != nil {
+			// Add point for the curve to end at
+			ret += fmt.Sprintf(" %d %d ", int(math.Round(p.Segments[0].X)), int(math.Round(p.Segments[0].Y)))
+		} else {
+			// Draw a line from final point to starting point
+			ret += "Z"
+		}
 	}
 	return ret
 }
@@ -106,27 +116,47 @@ func PathTranslate(path *Path, x, y float64) *Path {
 }
 
 // Bounds returns the bounding box of the path
-// FIXME: This does not take curves into account.
 func (p *Path) GetBounds() *bounds.Bounds {
 	if p == nil || len(p.Segments) == 0 {
 		return nil
 	}
-	minX := p.Segments[0].X
-	minY := p.Segments[0].Y
-	maxX := p.Segments[0].X
-	maxY := p.Segments[0].Y
-	for _, segment := range p.Segments {
-		if segment.X < minX {
-			minX = segment.X
-		}
-		if segment.Y < minY {
-			minY = segment.Y
-		}
-		if segment.X > maxX {
-			maxX = segment.X
-		}
-		if segment.Y > maxY {
-			maxY = segment.Y
+	minX := math.Inf(1)
+	minY := math.Inf(1)
+	maxX := math.Inf(-1)
+	maxY := math.Inf(-1)
+	for i := 0; i < len(p.Segments); i++ {
+		segment := p.Segments[i]
+		if segment.Curve == nil {
+			if segment.X < minX {
+				minX = segment.X
+			}
+			if segment.Y < minY {
+				minY = segment.Y
+			}
+			if segment.X > maxX {
+				maxX = segment.X
+			}
+			if segment.Y > maxY {
+				maxY = segment.Y
+			}
+		} else {
+			next := p.Segments[util.Mod(i+1, len(p.Segments))]
+			steps := util.Linspace(0.0, 1.0, 10) // Number of interpolation steps
+			for _, t := range steps {
+				x, y := segment.Curve.Interpolate(segment.Point, next.Point, t)
+				if x < minX {
+					minX = x
+				}
+				if y < minY {
+					minY = y
+				}
+				if x > maxX {
+					maxX = x
+				}
+				if y > maxY {
+					maxY = y
+				}
+			}
 		}
 	}
 	return &bounds.Bounds{
