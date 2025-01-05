@@ -83,7 +83,7 @@ func (s Segment) LineIntersections(dx, dy, x1, y1, x2, y2 float64) []point.Inter
 }
 
 // Returns intersection points in the order that they intersect the bound.
-func (s Segment) BoundIntersections(toX, toY, top, right, bottom, left float64) []point.Point {
+func (s Segment) BoundIntersections(toX, toY, top, right, bottom, left float64) []point.InterpolationPoint {
 	var intersections []point.InterpolationPoint
 
 	topIntersections := s.LineIntersections(toX, toY, left, top, right, top)
@@ -102,11 +102,5 @@ func (s Segment) BoundIntersections(toX, toY, top, right, bottom, left float64) 
 		return intersections[i].T < intersections[j].T
 	})
 
-	var ret []point.Point
-
-	for _, inter := range intersections {
-		ret = append(ret, inter.Point)
-	}
-
-	return ret
+	return intersections
 }
