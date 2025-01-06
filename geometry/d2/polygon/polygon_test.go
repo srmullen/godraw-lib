@@ -3,15 +3,13 @@ package polygon
 import (
 	"testing"
 
-	"github.com/srmullen/godraw-lib/geometry/d2/point"
-
 	"github.com/stretchr/testify/assert"
 )
 
 func TestGetIntersections(t *testing.T) {
 
 	t.Run("Bounds do not intersect", func(t *testing.T) {
-		p1 := NewPolygon([]*point.Point{
+		p1 := NewPolygon(Points{
 			{
 				X: 0,
 				Y: 0,
@@ -26,7 +24,7 @@ func TestGetIntersections(t *testing.T) {
 			},
 		})
 
-		p2 := NewPolygon([]*point.Point{
+		p2 := NewPolygon(Points{
 			{
 				X: 0,
 				Y: 1,
@@ -45,7 +43,7 @@ func TestGetIntersections(t *testing.T) {
 		assert.Equal(t, 0, len(intersections))
 	})
 	t.Run("Intersects", func(t *testing.T) {
-		p1 := NewPolygon([]*point.Point{
+		p1 := NewPolygon(Points{
 			{
 				X: 0,
 				Y: 0,
@@ -60,7 +58,7 @@ func TestGetIntersections(t *testing.T) {
 			},
 		})
 
-		p2 := NewPolygon([]*point.Point{
+		p2 := NewPolygon(Points{
 			{
 				X: 0.5,
 				Y: 1,
